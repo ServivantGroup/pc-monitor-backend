@@ -32,47 +32,12 @@
       color: var(--text);
       font-family: var(--sans);
       min-height: 100dvh;
-      padding: env(safe-area-inset-top, 20px) 0 env(safe-area-inset-bottom, 20px);
-    }
-    header {
       display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 20px 20px 0;
-      margin-bottom: 4px;
-    }
-    .logo {
-      font-family: var(--mono);
-      font-size: 12px;
-      font-weight: 700;
-      color: var(--text3);
-      letter-spacing: 0.16em;
-      text-transform: uppercase;
-    }
-    .refresh-btn {
-      background: var(--surface);
-      border: 0.5px solid var(--border);
-      border-radius: 50%;
-      width: 34px;
-      height: 34px;
-      display: flex;
-      align-items: center;
+      flex-direction: column;
       justify-content: center;
-      cursor: pointer;
-      color: var(--text3);
-      font-size: 16px;
-      transition: all 0.2s;
-      -webkit-tap-highlight-color: transparent;
-    }
-    .refresh-btn:active { background: var(--surface2); transform: rotate(180deg); }
-    .last-update {
-      font-family: var(--mono);
-      font-size: 10px;
-      color: var(--text3);
-      padding: 8px 20px 18px;
+      padding: env(safe-area-inset-top, 16px) 14px env(safe-area-inset-bottom, 16px);
     }
     .devices {
-      padding: 0 14px;
       display: flex;
       flex-direction: column;
       gap: 10px;
@@ -143,11 +108,7 @@
       overflow: hidden;
       text-overflow: ellipsis;
     }
-    .card-id {
-      font-family: var(--mono);
-      font-size: 10px;
-      color: var(--text3);
-    }
+    .card-id { font-family: var(--mono); font-size: 10px; color: var(--text3); }
     .badge {
       font-family: var(--mono);
       font-size: 10px;
@@ -159,16 +120,8 @@
     }
     .badge-on  { background: var(--green-dim); color: var(--green); border: 0.5px solid rgba(34,197,94,0.3); }
     .badge-off { background: var(--red-dim);   color: var(--red);   border: 0.5px solid rgba(239,68,68,0.2); }
-    .card-stats {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 7px;
-    }
-    .stat {
-      background: var(--surface2);
-      border-radius: 10px;
-      padding: 9px 11px;
-    }
+    .card-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 7px; }
+    .stat { background: var(--surface2); border-radius: 10px; padding: 9px 11px; }
     .stat-label {
       font-family: var(--mono);
       font-size: 9px;
@@ -177,11 +130,7 @@
       letter-spacing: 0.1em;
       margin-bottom: 4px;
     }
-    .stat-val {
-      font-size: 13px;
-      font-weight: 500;
-      color: var(--text2);
-    }
+    .stat-val { font-size: 13px; font-weight: 500; color: var(--text2); }
     .stat-val.g { color: var(--green); }
     .stat-val.r { color: var(--red); }
     .empty-state {
@@ -192,28 +141,57 @@
       font-size: 12px;
       line-height: 2.2;
     }
-    .config-box {
-      margin: 20px 14px 0;
-      background: var(--surface);
-      border-radius: 16px;
-      border: 0.5px solid var(--border);
-      padding: 14px;
-    }
-    .config-label {
+
+    /* Zona secreta: mantén pulsado el fondo 2s para abrir config */
+    .secret-hint {
+      text-align: center;
+      margin-top: 20px;
       font-family: var(--mono);
-      font-size: 9px;
+      font-size: 10px;
+      color: #1a1a1a;
+      letter-spacing: 0.1em;
+      user-select: none;
+    }
+
+    /* Panel de configuración */
+    .config-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.85);
+      z-index: 100;
+      align-items: flex-end;
+    }
+    .config-overlay.open { display: flex; }
+    .config-panel {
+      background: #141414;
+      border-radius: 24px 24px 0 0;
+      border-top: 0.5px solid var(--border);
+      padding: 20px 20px 40px;
+      width: 100%;
+    }
+    .config-handle {
+      width: 36px;
+      height: 4px;
+      background: var(--border);
+      border-radius: 2px;
+      margin: 0 auto 20px;
+    }
+    .config-title {
+      font-family: var(--mono);
+      font-size: 10px;
       color: var(--text3);
       text-transform: uppercase;
-      letter-spacing: 0.12em;
-      margin-bottom: 10px;
+      letter-spacing: 0.14em;
+      margin-bottom: 14px;
     }
-    .config-row { display: flex; align-items: center; gap: 8px; }
+    .config-row { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; }
     .url-input {
       flex: 1;
       background: var(--surface2);
       border: 0.5px solid var(--border);
-      border-radius: 8px;
-      padding: 9px 11px;
+      border-radius: 10px;
+      padding: 11px 13px;
       color: var(--text);
       font-family: var(--mono);
       font-size: 11px;
@@ -224,8 +202,8 @@
       background: var(--green);
       color: #000;
       border: none;
-      border-radius: 8px;
-      padding: 9px 14px;
+      border-radius: 10px;
+      padding: 11px 16px;
       font-family: var(--sans);
       font-size: 13px;
       font-weight: 500;
@@ -234,52 +212,76 @@
       white-space: nowrap;
     }
     .save-btn:active { opacity: 0.75; }
-    .install-hint {
-      margin: 14px 14px 0;
-      background: var(--green-dim);
-      border: 0.5px solid rgba(34,197,94,0.2);
-      border-radius: 12px;
-      padding: 12px 14px;
+    .config-hint {
       font-size: 12px;
-      color: var(--text2);
+      color: var(--text3);
       line-height: 1.7;
-      display: none;
+      font-family: var(--mono);
+      margin-bottom: 16px;
     }
-    .install-hint strong { color: var(--green); }
+    .close-btn {
+      width: 100%;
+      padding: 12px;
+      border-radius: 10px;
+      border: 0.5px solid var(--border);
+      background: transparent;
+      color: var(--text2);
+      font-family: var(--sans);
+      font-size: 14px;
+      cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .close-btn:active { background: var(--surface2); }
   </style>
 </head>
 <body>
 
-<header>
-  <span class="logo">PC Monitor</span>
-  <button class="refresh-btn" onclick="fetchStatus()" title="Actualizar">↻</button>
-</header>
-<div class="last-update" id="lastUpdate">Conectando...</div>
-
 <div class="devices" id="deviceList">
-  <div class="empty-state">Conectando con el servidor...<br/>Configura la URL abajo</div>
+  <div class="empty-state">Conectando...<br/>Mantén pulsado para configurar</div>
 </div>
 
-<div class="config-box">
-  <div class="config-label">URL del servidor</div>
-  <div class="config-row">
-    <input class="url-input" id="serverUrl" type="url" placeholder="https://tu-app.onrender.com" />
-    <button class="save-btn" onclick="saveUrl()">Guardar</button>
+<div class="secret-hint">···</div>
+
+<!-- Panel de configuración oculto -->
+<div class="config-overlay" id="configOverlay" onclick="closeOnBg(event)">
+  <div class="config-panel">
+    <div class="config-handle"></div>
+    <div class="config-title">Configuración</div>
+    <div class="config-row">
+      <input class="url-input" id="serverUrl" type="url" placeholder="https://tu-app.onrender.com" />
+      <button class="save-btn" onclick="saveUrl()">Guardar</button>
+    </div>
+    <div class="config-hint">Mantén pulsado el fondo 2s<br/>para volver a esta pantalla.</div>
+    <button class="close-btn" onclick="closeConfig()">Cerrar</button>
   </div>
-</div>
-
-<div class="install-hint" id="installHint">
-  <strong>Instalar como app:</strong> toca los tres puntos de Chrome y selecciona "Añadir a pantalla de inicio".
 </div>
 
 <script>
 let serverUrl = localStorage.getItem('serverUrl') || '';
 let interval = null;
+let pressTimer = null;
+
 document.getElementById('serverUrl').value = serverUrl;
+
+// Mantener pulsado 2 segundos para abrir config
+document.body.addEventListener('touchstart', () => {
+  pressTimer = setTimeout(openConfig, 2000);
+});
+document.body.addEventListener('touchend', () => clearTimeout(pressTimer));
+document.body.addEventListener('touchmove', () => clearTimeout(pressTimer));
+document.body.addEventListener('mousedown', () => {
+  pressTimer = setTimeout(openConfig, 2000);
+});
+document.body.addEventListener('mouseup', () => clearTimeout(pressTimer));
+
+function openConfig() { document.getElementById('configOverlay').classList.add('open'); }
+function closeConfig() { document.getElementById('configOverlay').classList.remove('open'); }
+function closeOnBg(e) { if (e.target === document.getElementById('configOverlay')) closeConfig(); }
 
 function saveUrl() {
   serverUrl = document.getElementById('serverUrl').value.trim().replace(/\/$/, '');
   localStorage.setItem('serverUrl', serverUrl);
+  closeConfig();
   fetchStatus();
 }
 
@@ -325,26 +327,15 @@ function renderDevices(list) {
 }
 
 async function fetchStatus() {
-  if (!serverUrl) {
-    document.getElementById('lastUpdate').textContent = 'Configura la URL del servidor abajo';
-    return;
-  }
+  if (!serverUrl) { openConfig(); return; }
   try {
     const res = await fetch(`${serverUrl}/status`);
     const data = await res.json();
     renderDevices(data);
-    const now = new Date();
-    document.getElementById('lastUpdate').textContent =
-      `actualizado · ${now.getHours()}:${String(now.getMinutes()).padStart(2,'0')}:${String(now.getSeconds()).padStart(2,'0')}`;
   } catch {
-    document.getElementById('lastUpdate').textContent = 'error al conectar · reintentando...';
     document.getElementById('deviceList').innerHTML =
-      '<div class="empty-state">No se pudo conectar.<br/>Verifica la URL del servidor.</div>';
+      '<div class="empty-state">Sin conexión.<br/>Mantén pulsado para configurar.</div>';
   }
-}
-
-if (!window.matchMedia('(display-mode: standalone)').matches) {
-  document.getElementById('installHint').style.display = 'block';
 }
 
 fetchStatus();
