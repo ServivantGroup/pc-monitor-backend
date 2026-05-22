@@ -8,16 +8,15 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <title>PC Monitor</title>
   <link rel="manifest" href="manifest.json" />
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
     :root {
       --bg: #0a0a0a;
       --surface: #111111;
       --surface2: #181818;
       --border: #222222;
+      --border-on: rgba(34,197,94,0.3);
       --text: #ffffff;
       --text2: #888888;
       --text3: #444444;
@@ -28,113 +27,100 @@
       --mono: 'Space Mono', monospace;
       --sans: 'DM Sans', sans-serif;
     }
-
     body {
       background: var(--bg);
       color: var(--text);
       font-family: var(--sans);
       min-height: 100dvh;
-      padding: env(safe-area-inset-top, 16px) 0 env(safe-area-inset-bottom, 16px);
+      padding: env(safe-area-inset-top, 20px) 0 env(safe-area-inset-bottom, 20px);
     }
-
     header {
       display: flex;
       align-items: center;
       justify-content: space-between;
       padding: 20px 20px 0;
-      margin-bottom: 8px;
+      margin-bottom: 4px;
     }
-
     .logo {
       font-family: var(--mono);
-      font-size: 13px;
+      font-size: 12px;
       font-weight: 700;
       color: var(--text3);
-      letter-spacing: 0.14em;
+      letter-spacing: 0.16em;
       text-transform: uppercase;
     }
-
     .refresh-btn {
       background: var(--surface);
       border: 0.5px solid var(--border);
       border-radius: 50%;
-      width: 36px;
-      height: 36px;
+      width: 34px;
+      height: 34px;
       display: flex;
       align-items: center;
       justify-content: center;
       cursor: pointer;
-      color: var(--text2);
-      font-size: 18px;
-      transition: background 0.15s;
+      color: var(--text3);
+      font-size: 16px;
+      transition: all 0.2s;
       -webkit-tap-highlight-color: transparent;
     }
-    .refresh-btn:active { background: var(--surface2); }
-    .refresh-btn.spinning { animation: spin 0.6s linear; }
-    @keyframes spin { to { transform: rotate(360deg); } }
-
+    .refresh-btn:active { background: var(--surface2); transform: rotate(180deg); }
     .last-update {
       font-family: var(--mono);
-      font-size: 11px;
+      font-size: 10px;
       color: var(--text3);
-      padding: 0 20px 20px;
+      padding: 8px 20px 18px;
     }
-
     .devices {
-      padding: 0 16px;
+      padding: 0 14px;
       display: flex;
       flex-direction: column;
-      gap: 12px;
+      gap: 10px;
     }
-
     .device-card {
       background: var(--surface);
       border-radius: 20px;
       border: 0.5px solid var(--border);
-      padding: 20px;
-      transition: border-color 0.3s;
+      padding: 18px;
+      transition: border-color 0.4s;
       position: relative;
       overflow: hidden;
     }
-    .device-card.online { border-color: rgba(34,197,94,0.25); }
-    .device-card.offline { border-color: var(--border); }
-
-    .card-glow {
+    .device-card.online { border-color: var(--border-on); }
+    .top-line {
       position: absolute;
       top: 0; left: 0; right: 0;
       height: 1px;
-      background: linear-gradient(90deg, transparent, var(--green), transparent);
+      background: linear-gradient(90deg, transparent 0%, var(--green) 50%, transparent 100%);
       opacity: 0;
       transition: opacity 0.4s;
     }
-    .device-card.online .card-glow { opacity: 1; }
-
+    .device-card.online .top-line { opacity: 1; }
     .card-top {
       display: flex;
       align-items: center;
-      gap: 14px;
-      margin-bottom: 18px;
+      gap: 12px;
+      margin-bottom: 14px;
     }
-
-    .status-dot-wrap {
+    .dot-wrap {
       position: relative;
-      width: 44px;
-      height: 44px;
+      width: 40px;
+      height: 40px;
       flex-shrink: 0;
     }
-    .pulse-ring {
+    .pulse {
       position: absolute;
       inset: 0;
       border-radius: 50%;
       background: var(--green-dim);
-      animation: pulse 2s ease-out infinite;
+      animation: pulse 2.2s ease-out infinite;
     }
-    .device-card.offline .pulse-ring { display: none; }
+    .device-card.offline .pulse { display: none; }
     @keyframes pulse {
-      0% { transform: scale(0.8); opacity: 1; }
-      100% { transform: scale(1.4); opacity: 0; }
+      0%   { transform: scale(0.75); opacity: 1; }
+      100% { transform: scale(1.45); opacity: 0; }
     }
-    .status-dot {
+    .dot-icon {
       position: absolute;
       inset: 6px;
       border-radius: 50%;
@@ -142,16 +128,15 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 14px;
+      font-size: 13px;
     }
-    .device-card.offline .status-dot {
+    .device-card.offline .dot-icon {
       background: var(--surface2);
-      border: 1px solid #333;
+      border: 1px solid #2e2e2e;
     }
-
     .card-info { flex: 1; min-width: 0; }
     .card-name {
-      font-size: 17px;
+      font-size: 16px;
       font-weight: 500;
       margin-bottom: 3px;
       white-space: nowrap;
@@ -160,103 +145,87 @@
     }
     .card-id {
       font-family: var(--mono);
-      font-size: 11px;
+      font-size: 10px;
       color: var(--text3);
     }
-
-    .card-badge {
+    .badge {
       font-family: var(--mono);
-      font-size: 11px;
+      font-size: 10px;
       font-weight: 700;
       padding: 5px 10px;
       border-radius: 100px;
-      letter-spacing: 0.08em;
+      letter-spacing: 0.1em;
+      flex-shrink: 0;
     }
-    .badge-on {
-      background: var(--green-dim);
-      color: var(--green);
-      border: 0.5px solid rgba(34,197,94,0.3);
-    }
-    .badge-off {
-      background: var(--red-dim);
-      color: var(--red);
-      border: 0.5px solid rgba(239,68,68,0.2);
-    }
-
+    .badge-on  { background: var(--green-dim); color: var(--green); border: 0.5px solid rgba(34,197,94,0.3); }
+    .badge-off { background: var(--red-dim);   color: var(--red);   border: 0.5px solid rgba(239,68,68,0.2); }
     .card-stats {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 8px;
+      gap: 7px;
     }
-
     .stat {
       background: var(--surface2);
       border-radius: 10px;
-      padding: 10px 12px;
+      padding: 9px 11px;
     }
     .stat-label {
       font-family: var(--mono);
-      font-size: 10px;
+      font-size: 9px;
       color: var(--text3);
       text-transform: uppercase;
-      letter-spacing: 0.08em;
+      letter-spacing: 0.1em;
       margin-bottom: 4px;
     }
-    .stat-value {
-      font-size: 14px;
+    .stat-val {
+      font-size: 13px;
       font-weight: 500;
       color: var(--text2);
     }
-    .stat-value.green { color: var(--green); }
-    .stat-value.red { color: var(--red); }
-
+    .stat-val.g { color: var(--green); }
+    .stat-val.r { color: var(--red); }
     .empty-state {
       text-align: center;
       padding: 60px 20px;
       color: var(--text3);
       font-family: var(--mono);
-      font-size: 13px;
-      line-height: 2;
+      font-size: 12px;
+      line-height: 2.2;
     }
-
-    .config-section {
-      margin: 24px 16px 0;
+    .config-box {
+      margin: 20px 14px 0;
       background: var(--surface);
       border-radius: 16px;
       border: 0.5px solid var(--border);
-      padding: 16px;
+      padding: 14px;
     }
-    .config-title {
+    .config-label {
       font-family: var(--mono);
-      font-size: 11px;
+      font-size: 9px;
       color: var(--text3);
       text-transform: uppercase;
-      letter-spacing: 0.1em;
-      margin-bottom: 12px;
+      letter-spacing: 0.12em;
+      margin-bottom: 10px;
     }
-    .config-row {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-    .config-input {
+    .config-row { display: flex; align-items: center; gap: 8px; }
+    .url-input {
       flex: 1;
       background: var(--surface2);
       border: 0.5px solid var(--border);
       border-radius: 8px;
-      padding: 10px 12px;
+      padding: 9px 11px;
       color: var(--text);
       font-family: var(--mono);
-      font-size: 12px;
+      font-size: 11px;
       outline: none;
     }
-    .config-input:focus { border-color: #444; }
+    .url-input:focus { border-color: #333; }
     .save-btn {
       background: var(--green);
       color: #000;
       border: none;
       border-radius: 8px;
-      padding: 10px 16px;
+      padding: 9px 14px;
       font-family: var(--sans);
       font-size: 13px;
       font-weight: 500;
@@ -264,17 +233,16 @@
       -webkit-tap-highlight-color: transparent;
       white-space: nowrap;
     }
-    .save-btn:active { opacity: 0.8; }
-
+    .save-btn:active { opacity: 0.75; }
     .install-hint {
-      margin: 20px 16px 0;
-      background: rgba(34,197,94,0.05);
-      border: 0.5px solid rgba(34,197,94,0.15);
+      margin: 14px 14px 0;
+      background: var(--green-dim);
+      border: 0.5px solid rgba(34,197,94,0.2);
       border-radius: 12px;
-      padding: 14px;
-      font-size: 13px;
+      padding: 12px 14px;
+      font-size: 12px;
       color: var(--text2);
-      line-height: 1.6;
+      line-height: 1.7;
       display: none;
     }
     .install-hint strong { color: var(--green); }
@@ -284,32 +252,29 @@
 
 <header>
   <span class="logo">PC Monitor</span>
-  <button class="refresh-btn" id="refreshBtn" onclick="fetchStatus()" title="Actualizar">↻</button>
+  <button class="refresh-btn" onclick="fetchStatus()" title="Actualizar">↻</button>
 </header>
-<div class="last-update" id="lastUpdate">Actualizando...</div>
+<div class="last-update" id="lastUpdate">Conectando...</div>
 
 <div class="devices" id="deviceList">
   <div class="empty-state">Conectando con el servidor...<br/>Configura la URL abajo</div>
 </div>
 
-<div class="config-section">
-  <div class="config-title">URL del servidor</div>
+<div class="config-box">
+  <div class="config-label">URL del servidor</div>
   <div class="config-row">
-    <input class="config-input" id="serverUrl" type="url"
-      placeholder="https://tu-app.onrender.com" />
+    <input class="url-input" id="serverUrl" type="url" placeholder="https://tu-app.onrender.com" />
     <button class="save-btn" onclick="saveUrl()">Guardar</button>
   </div>
 </div>
 
 <div class="install-hint" id="installHint">
-  <strong>Instalar como app:</strong> toca el botón Compartir de Safari / los tres puntos de Chrome y selecciona "Añadir a pantalla de inicio".
+  <strong>Instalar como app:</strong> toca los tres puntos de Chrome y selecciona "Añadir a pantalla de inicio".
 </div>
 
 <script>
-const TIMEOUT = 3 * 60 * 1000;
 let serverUrl = localStorage.getItem('serverUrl') || '';
 let interval = null;
-
 document.getElementById('serverUrl').value = serverUrl;
 
 function saveUrl() {
@@ -318,52 +283,45 @@ function saveUrl() {
   fetchStatus();
 }
 
-function ago(ms) {
-  const s = Math.floor(ms / 1000);
-  if (s < 60) return `hace ${s}s`;
-  const m = Math.floor(s / 60);
+function ago(sec) {
+  if (sec < 60) return `hace ${sec}s`;
+  const m = Math.floor(sec / 60);
   if (m < 60) return `hace ${m}m`;
   const h = Math.floor(m / 60);
   return `hace ${h}h ${m % 60}m`;
 }
 
 function renderDevices(list) {
-  const container = document.getElementById('deviceList');
+  const el = document.getElementById('deviceList');
   if (!list || list.length === 0) {
-    container.innerHTML = '<div class="empty-state">Sin dispositivos aún.<br/>Ejecuta el script en tu PC.</div>';
+    el.innerHTML = '<div class="empty-state">Sin dispositivos aún.<br/>Ejecuta el script en tu PC.</div>';
     return;
   }
-
-  container.innerHTML = list.map(d => {
-    const isOn = d.online;
-    const since = ago(d.ago * 1000);
-    const icon = isOn ? '🖥' : '💤';
-    return `
-    <div class="device-card ${isOn ? 'online' : 'offline'}">
-      <div class="card-glow"></div>
+  el.innerHTML = list.map(d => `
+    <div class="device-card ${d.online ? 'online' : 'offline'}">
+      <div class="top-line"></div>
       <div class="card-top">
-        <div class="status-dot-wrap">
-          <div class="pulse-ring"></div>
-          <div class="status-dot">${icon}</div>
+        <div class="dot-wrap">
+          <div class="pulse"></div>
+          <div class="dot-icon">${d.online ? '🖥' : '💤'}</div>
         </div>
         <div class="card-info">
           <div class="card-name">${d.name}</div>
           <div class="card-id">${d.id}</div>
         </div>
-        <span class="card-badge ${isOn ? 'badge-on' : 'badge-off'}">${isOn ? 'ON' : 'OFF'}</span>
+        <span class="badge ${d.online ? 'badge-on' : 'badge-off'}">${d.online ? 'ON' : 'OFF'}</span>
       </div>
       <div class="card-stats">
         <div class="stat">
           <div class="stat-label">Última señal</div>
-          <div class="stat-value ${isOn ? 'green' : 'red'}">${since}</div>
+          <div class="stat-val ${d.online ? 'g' : 'r'}">${ago(d.ago)}</div>
         </div>
         <div class="stat">
           <div class="stat-label">Estado</div>
-          <div class="stat-value ${isOn ? 'green' : ''}">${isOn ? 'Encendido' : 'Apagado'}</div>
+          <div class="stat-val ${d.online ? 'g' : ''}">${d.online ? 'Encendido' : 'Apagado'}</div>
         </div>
       </div>
-    </div>`;
-  }).join('');
+    </div>`).join('');
 }
 
 async function fetchStatus() {
@@ -371,39 +329,26 @@ async function fetchStatus() {
     document.getElementById('lastUpdate').textContent = 'Configura la URL del servidor abajo';
     return;
   }
-
-  const btn = document.getElementById('refreshBtn');
-  btn.classList.add('spinning');
-
   try {
     const res = await fetch(`${serverUrl}/status`);
     const data = await res.json();
     renderDevices(data);
     const now = new Date();
     document.getElementById('lastUpdate').textContent =
-      `Actualizado a las ${now.getHours()}:${String(now.getMinutes()).padStart(2,'0')}:${String(now.getSeconds()).padStart(2,'0')}`;
-  } catch (e) {
-    document.getElementById('lastUpdate').textContent = 'Error al conectar con el servidor';
+      `actualizado · ${now.getHours()}:${String(now.getMinutes()).padStart(2,'0')}:${String(now.getSeconds()).padStart(2,'0')}`;
+  } catch {
+    document.getElementById('lastUpdate').textContent = 'error al conectar · reintentando...';
     document.getElementById('deviceList').innerHTML =
       '<div class="empty-state">No se pudo conectar.<br/>Verifica la URL del servidor.</div>';
-  } finally {
-    btn.classList.remove('spinning');
   }
 }
 
-// Auto-actualizar cada 60 segundos
-function startInterval() {
-  if (interval) clearInterval(interval);
-  interval = setInterval(fetchStatus, 60000);
-}
-
-// Mostrar hint de instalación si no está instalada
 if (!window.matchMedia('(display-mode: standalone)').matches) {
   document.getElementById('installHint').style.display = 'block';
 }
 
 fetchStatus();
-startInterval();
+interval = setInterval(fetchStatus, 60000);
 </script>
 </body>
 </html>
