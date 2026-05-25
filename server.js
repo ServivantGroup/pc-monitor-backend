@@ -10,7 +10,7 @@ app.use(express.static(path.join(__dirname, "public")));
 const KNOWN_DEVICES = [
   { id: "pc1", name: "ServiVant_Torre" },
   { id: "pc2", name: "SER-02" },
-  { id: "pc3", name: "SER-03" },
+  { id: "pc3", name: "PC Dormitorio" },
 ];
 
 const lastSeen = {};
@@ -38,4 +38,9 @@ app.get("/status", (req, res) => {
   res.json(result);
 });
 
-app.get("*", (req,
+app.get("*", (req, res) => {
+  res.sendFile(path.join(__dirname, "public", "index.html"));
+});
+
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => console.log(`Servidor escuchando en puerto ${PORT}`));
