@@ -8,9 +8,9 @@ app.use(express.json());
 app.use(express.static(path.join(__dirname, "public")));
 
 const KNOWN_DEVICES = [
-  { id: "pc1", name: "ServiVant_Torre" },
-  { id: "pc2", name: "SER-02" },
-  { id: "pc3", name: "SER-03" },
+  { id: "PC1", name: "ServiVant_Torre" },
+  { id: "PC2", name: "SER-02" },
+  { id: "PC3", name: "SER-03" },
 ];
 
 const lastSeen = {};
