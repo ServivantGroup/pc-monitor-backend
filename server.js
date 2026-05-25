@@ -1,68 +1,41 @@
 const express = require("express");
 const cors = require("cors");
 const path = require("path");
-const fs = require("fs");
 const app = express();
 
 app.use(cors());
 app.use(express.json());
 app.use(express.static(path.join(__dirname, "public")));
 
-const DATA_FILE = path.join(__dirname, "devices.json");
+const KNOWN_DEVICES = [
+  { id: "pc1", name: "ServiVant_Torre" },
+  { id: "pc2", name: "SER-02" },
+  { id: "pc3", name: "SER-03" },
+];
 
-// Carga dispositivos del archivo
-function loadDevices() {
-  try {
-    if (fs.existsSync(DATA_FILE)) {
-      return JSON.parse(fs.readFileSync(DATA_FILE, "utf8"));
-    }
-  } catch (e) {}
-  return {};
-}
+const lastSeen = {};
 
-// Guarda dispositivos en archivo
-function saveDevices(devices) {
-  try {
-    fs.writeFileSync(DATA_FILE, JSON.stringify(devices, null, 2));
-  } catch (e) {}
-}
-
-let devices = loadDevices();
-
-// El PC envía heartbeat
 app.post("/heartbeat", (req, res) => {
-  const { id, name } = req.body;
+  const { id } = req.body;
   if (!id) return res.status(400).json({ error: "Falta el id" });
-
-  devices[id] = {
-    id,
-    name: name || id,
-    lastSeen: Date.now(),
-  };
-
-  saveDevices(devices);
+  lastSeen[id] = Date.now();
   res.json({ ok: true });
 });
 
-// La app consulta el estado
 app.get("/status", (req, res) => {
   const TIMEOUT_MS = 3 * 60 * 1000;
   const now = Date.now();
-
-  const result = Object.values(devices).map((d) => ({
-    id: d.id,
-    name: d.name,
-    online: now - d.lastSeen < TIMEOUT_MS,
-    lastSeen: d.lastSeen,
-    ago: Math.floor((now - d.lastSeen) / 1000),
-  }));
-
+  const result = KNOWN_DEVICES.map((d) => {
+    const ts = lastSeen[d.id] || 0;
+    return {
+      id: d.id,
+      name: d.name,
+      online: ts > 0 && now - ts < TIMEOUT_MS,
+      lastSeen: ts,
+      ago: ts > 0 ? Math.floor((now - ts) / 1000) : null,
+    };
+  });
   res.json(result);
 });
 
-app.get("*", (req, res) => {
-  res.sendFile(path.join(__dirname, "public", "index.html"));
-});
-
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => console.log(`Servidor escuchando en puerto ${PORT}`));
+app.get("*", (req,
