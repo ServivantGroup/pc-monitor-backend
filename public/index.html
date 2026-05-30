@@ -150,7 +150,6 @@ function saveUrl() {
   fetchStatus();
 }
 
-// Guarda el lastSeen localmente para no perderlo si Render se reinicia
 function saveLocalCache(list) {
   const cache = {};
   list.forEach(d => {
@@ -176,7 +175,7 @@ function formatDate(ts) {
 }
 
 function ago(sec) {
-  if (!sec) return '—';
+  if (sec === null || sec === undefined) return '—';
   if (sec < 60) return `hace ${sec}s`;
   const m = Math.floor(sec / 60);
   if (m < 60) return `hace ${m}m`;
@@ -194,10 +193,9 @@ function renderDevices(list) {
   const cache = loadLocalCache();
 
   el.innerHTML = list.map(d => {
-    // Usa el lastSeen del servidor o el guardado localmente
     const ts = d.lastSeen && d.lastSeen > 0 ? d.lastSeen : (cache[d.id] || 0);
     const ultimaVez = ts > 0 ? formatDate(ts) : 'sin datos';
-    const agoText = d.online ? ago(d.ago) : ultimaVez;
+    const agoText = d.online && d.ago !== null ? ago(d.ago) : ultimaVez;
 
     return `
     <div class="device-card ${d.online ? 'online' : 'offline'}">
@@ -235,7 +233,6 @@ async function fetchStatus() {
     saveLocalCache(data);
     renderDevices(data);
   } catch {
-    // Si falla el servidor usa la caché local
     const cache = loadLocalCache();
     const cached = Object.keys(cache).map(id => ({
       id, name: id, online: false, lastSeen: cache[id], ago: null
