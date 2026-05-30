@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -37,11 +38,7 @@
       justify-content: center;
       padding: env(safe-area-inset-top, 16px) 14px env(safe-area-inset-bottom, 16px);
     }
-    .devices {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-    }
+    .devices { display: flex; flex-direction: column; gap: 10px; }
     .device-card {
       background: var(--surface);
       border-radius: 20px;
@@ -61,22 +58,10 @@
       transition: opacity 0.4s;
     }
     .device-card.online .top-line { opacity: 1; }
-    .card-top {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      margin-bottom: 14px;
-    }
-    .dot-wrap {
-      position: relative;
-      width: 40px;
-      height: 40px;
-      flex-shrink: 0;
-    }
+    .card-top { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; }
+    .dot-wrap { position: relative; width: 40px; height: 40px; flex-shrink: 0; }
     .pulse {
-      position: absolute;
-      inset: 0;
-      border-radius: 50%;
+      position: absolute; inset: 0; border-radius: 50%;
       background: var(--green-dim);
       animation: pulse 2.2s ease-out infinite;
     }
@@ -86,151 +71,37 @@
       100% { transform: scale(1.45); opacity: 0; }
     }
     .dot-icon {
-      position: absolute;
-      inset: 6px;
-      border-radius: 50%;
+      position: absolute; inset: 6px; border-radius: 50%;
       background: var(--green);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 13px;
+      display: flex; align-items: center; justify-content: center; font-size: 13px;
     }
-    .device-card.offline .dot-icon {
-      background: var(--surface2);
-      border: 1px solid #2e2e2e;
-    }
+    .device-card.offline .dot-icon { background: var(--surface2); border: 1px solid #2e2e2e; }
     .card-info { flex: 1; min-width: 0; }
-    .card-name {
-      font-size: 16px;
-      font-weight: 500;
-      margin-bottom: 3px;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
+    .card-name { font-size: 16px; font-weight: 500; margin-bottom: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .card-id { font-family: var(--mono); font-size: 10px; color: var(--text3); }
-    .badge {
-      font-family: var(--mono);
-      font-size: 10px;
-      font-weight: 700;
-      padding: 5px 10px;
-      border-radius: 100px;
-      letter-spacing: 0.1em;
-      flex-shrink: 0;
-    }
+    .badge { font-family: var(--mono); font-size: 10px; font-weight: 700; padding: 5px 10px; border-radius: 100px; letter-spacing: 0.1em; flex-shrink: 0; }
     .badge-on  { background: var(--green-dim); color: var(--green); border: 0.5px solid rgba(34,197,94,0.3); }
     .badge-off { background: var(--red-dim);   color: var(--red);   border: 0.5px solid rgba(239,68,68,0.2); }
     .card-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 7px; }
     .stat { background: var(--surface2); border-radius: 10px; padding: 9px 11px; }
-    .stat-label {
-      font-family: var(--mono);
-      font-size: 9px;
-      color: var(--text3);
-      text-transform: uppercase;
-      letter-spacing: 0.1em;
-      margin-bottom: 4px;
-    }
+    .stat-label { font-family: var(--mono); font-size: 9px; color: var(--text3); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 4px; }
     .stat-val { font-size: 13px; font-weight: 500; color: var(--text2); }
     .stat-val.g { color: var(--green); }
     .stat-val.r { color: var(--red); }
-    .empty-state {
-      text-align: center;
-      padding: 60px 20px;
-      color: var(--text3);
-      font-family: var(--mono);
-      font-size: 12px;
-      line-height: 2.2;
-    }
-
-    /* Zona secreta: mantén pulsado el fondo 2s para abrir config */
-    .secret-hint {
-      text-align: center;
-      margin-top: 20px;
-      font-family: var(--mono);
-      font-size: 10px;
-      color: #1a1a1a;
-      letter-spacing: 0.1em;
-      user-select: none;
-    }
-
-    /* Panel de configuración */
-    .config-overlay {
-      display: none;
-      position: fixed;
-      inset: 0;
-      background: rgba(0,0,0,0.85);
-      z-index: 100;
-      align-items: flex-end;
-    }
+    .empty-state { text-align: center; padding: 60px 20px; color: var(--text3); font-family: var(--mono); font-size: 12px; line-height: 2.2; }
+    .secret-hint { text-align: center; margin-top: 20px; font-family: var(--mono); font-size: 10px; color: #1a1a1a; user-select: none; }
+    .config-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.85); z-index: 100; align-items: flex-end; }
     .config-overlay.open { display: flex; }
-    .config-panel {
-      background: #141414;
-      border-radius: 24px 24px 0 0;
-      border-top: 0.5px solid var(--border);
-      padding: 20px 20px 40px;
-      width: 100%;
-    }
-    .config-handle {
-      width: 36px;
-      height: 4px;
-      background: var(--border);
-      border-radius: 2px;
-      margin: 0 auto 20px;
-    }
-    .config-title {
-      font-family: var(--mono);
-      font-size: 10px;
-      color: var(--text3);
-      text-transform: uppercase;
-      letter-spacing: 0.14em;
-      margin-bottom: 14px;
-    }
+    .config-panel { background: #141414; border-radius: 24px 24px 0 0; border-top: 0.5px solid var(--border); padding: 20px 20px 40px; width: 100%; }
+    .config-handle { width: 36px; height: 4px; background: var(--border); border-radius: 2px; margin: 0 auto 20px; }
+    .config-title { font-family: var(--mono); font-size: 10px; color: var(--text3); text-transform: uppercase; letter-spacing: 0.14em; margin-bottom: 14px; }
     .config-row { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; }
-    .url-input {
-      flex: 1;
-      background: var(--surface2);
-      border: 0.5px solid var(--border);
-      border-radius: 10px;
-      padding: 11px 13px;
-      color: var(--text);
-      font-family: var(--mono);
-      font-size: 11px;
-      outline: none;
-    }
+    .url-input { flex: 1; background: var(--surface2); border: 0.5px solid var(--border); border-radius: 10px; padding: 11px 13px; color: var(--text); font-family: var(--mono); font-size: 11px; outline: none; }
     .url-input:focus { border-color: #333; }
-    .save-btn {
-      background: var(--green);
-      color: #000;
-      border: none;
-      border-radius: 10px;
-      padding: 11px 16px;
-      font-family: var(--sans);
-      font-size: 13px;
-      font-weight: 500;
-      cursor: pointer;
-      -webkit-tap-highlight-color: transparent;
-      white-space: nowrap;
-    }
+    .save-btn { background: var(--green); color: #000; border: none; border-radius: 10px; padding: 11px 16px; font-family: var(--sans); font-size: 13px; font-weight: 500; cursor: pointer; white-space: nowrap; }
     .save-btn:active { opacity: 0.75; }
-    .config-hint {
-      font-size: 12px;
-      color: var(--text3);
-      line-height: 1.7;
-      font-family: var(--mono);
-      margin-bottom: 16px;
-    }
-    .close-btn {
-      width: 100%;
-      padding: 12px;
-      border-radius: 10px;
-      border: 0.5px solid var(--border);
-      background: transparent;
-      color: var(--text2);
-      font-family: var(--sans);
-      font-size: 14px;
-      cursor: pointer;
-      -webkit-tap-highlight-color: transparent;
-    }
+    .config-hint { font-size: 12px; color: var(--text3); line-height: 1.7; font-family: var(--mono); margin-bottom: 16px; }
+    .close-btn { width: 100%; padding: 12px; border-radius: 10px; border: 0.5px solid var(--border); background: transparent; color: var(--text2); font-family: var(--sans); font-size: 14px; cursor: pointer; }
     .close-btn:active { background: var(--surface2); }
   </style>
 </head>
@@ -242,7 +113,6 @@
 
 <div class="secret-hint">···</div>
 
-<!-- Panel de configuración oculto -->
 <div class="config-overlay" id="configOverlay" onclick="closeOnBg(event)">
   <div class="config-panel">
     <div class="config-handle"></div>
@@ -263,15 +133,10 @@ let pressTimer = null;
 
 document.getElementById('serverUrl').value = serverUrl;
 
-// Mantener pulsado 2 segundos para abrir config
-document.body.addEventListener('touchstart', () => {
-  pressTimer = setTimeout(openConfig, 2000);
-});
+document.body.addEventListener('touchstart', () => { pressTimer = setTimeout(openConfig, 2000); });
 document.body.addEventListener('touchend', () => clearTimeout(pressTimer));
 document.body.addEventListener('touchmove', () => clearTimeout(pressTimer));
-document.body.addEventListener('mousedown', () => {
-  pressTimer = setTimeout(openConfig, 2000);
-});
+document.body.addEventListener('mousedown', () => { pressTimer = setTimeout(openConfig, 2000); });
 document.body.addEventListener('mouseup', () => clearTimeout(pressTimer));
 
 function openConfig() { document.getElementById('configOverlay').classList.add('open'); }
@@ -285,7 +150,33 @@ function saveUrl() {
   fetchStatus();
 }
 
+// Guarda el lastSeen localmente para no perderlo si Render se reinicia
+function saveLocalCache(list) {
+  const cache = {};
+  list.forEach(d => {
+    if (d.lastSeen && d.lastSeen > 0) cache[d.id] = d.lastSeen;
+  });
+  localStorage.setItem('lastSeenCache', JSON.stringify(cache));
+}
+
+function loadLocalCache() {
+  try { return JSON.parse(localStorage.getItem('lastSeenCache') || '{}'); }
+  catch { return {}; }
+}
+
+function formatDate(ts) {
+  if (!ts) return 'sin datos';
+  const d = new Date(ts);
+  const hoy = new Date();
+  const ayer = new Date(); ayer.setDate(ayer.getDate() - 1);
+  const hora = `${d.getHours()}:${String(d.getMinutes()).padStart(2,'0')}`;
+  if (d.toDateString() === hoy.toDateString()) return `hoy ${hora}`;
+  if (d.toDateString() === ayer.toDateString()) return `ayer ${hora}`;
+  return `${d.getDate()}/${d.getMonth()+1} ${hora}`;
+}
+
 function ago(sec) {
+  if (!sec) return '—';
   if (sec < 60) return `hace ${sec}s`;
   const m = Math.floor(sec / 60);
   if (m < 60) return `hace ${m}m`;
@@ -296,10 +187,19 @@ function ago(sec) {
 function renderDevices(list) {
   const el = document.getElementById('deviceList');
   if (!list || list.length === 0) {
-    el.innerHTML = '<div class="empty-state">Sin dispositivos aún.<br/>Ejecuta el script en tu PC.</div>';
+    el.innerHTML = '<div class="empty-state">Sin dispositivos.<br/>Ejecuta el script en tu PC.</div>';
     return;
   }
-  el.innerHTML = list.map(d => `
+
+  const cache = loadLocalCache();
+
+  el.innerHTML = list.map(d => {
+    // Usa el lastSeen del servidor o el guardado localmente
+    const ts = d.lastSeen && d.lastSeen > 0 ? d.lastSeen : (cache[d.id] || 0);
+    const ultimaVez = ts > 0 ? formatDate(ts) : 'sin datos';
+    const agoText = d.online ? ago(d.ago) : ultimaVez;
+
+    return `
     <div class="device-card ${d.online ? 'online' : 'offline'}">
       <div class="top-line"></div>
       <div class="card-top">
@@ -315,15 +215,16 @@ function renderDevices(list) {
       </div>
       <div class="card-stats">
         <div class="stat">
-          <div class="stat-label">Última señal</div>
-          <div class="stat-val ${d.online ? 'g' : 'r'}">${ago(d.ago)}</div>
+          <div class="stat-label">${d.online ? 'Última señal' : 'Último encendido'}</div>
+          <div class="stat-val ${d.online ? 'g' : 'r'}">${agoText}</div>
         </div>
         <div class="stat">
           <div class="stat-label">Estado</div>
           <div class="stat-val ${d.online ? 'g' : ''}">${d.online ? 'Encendido' : 'Apagado'}</div>
         </div>
       </div>
-    </div>`).join('');
+    </div>`;
+  }).join('');
 }
 
 async function fetchStatus() {
@@ -331,10 +232,15 @@ async function fetchStatus() {
   try {
     const res = await fetch(`${serverUrl}/status`);
     const data = await res.json();
+    saveLocalCache(data);
     renderDevices(data);
   } catch {
-    document.getElementById('deviceList').innerHTML =
-      '<div class="empty-state">Sin conexión.<br/>Mantén pulsado para configurar.</div>';
+    // Si falla el servidor usa la caché local
+    const cache = loadLocalCache();
+    const cached = Object.keys(cache).map(id => ({
+      id, name: id, online: false, lastSeen: cache[id], ago: null
+    }));
+    if (cached.length > 0) renderDevices(cached);
   }
 }
 
