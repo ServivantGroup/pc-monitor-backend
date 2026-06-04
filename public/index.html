@@ -88,8 +88,14 @@
     .stat-val { font-size: 13px; font-weight: 500; color: var(--text2); }
     .stat-val.g { color: var(--green); }
     .stat-val.r { color: var(--red); }
+    .updated-bar {
+      text-align: center;
+      margin-top: 16px;
+      font-family: var(--mono);
+      font-size: 10px;
+      color: #2a2a2a;
+    }
     .empty-state { text-align: center; padding: 60px 20px; color: var(--text3); font-family: var(--mono); font-size: 12px; line-height: 2.2; }
-    .secret-hint { text-align: center; margin-top: 20px; font-family: var(--mono); font-size: 10px; color: #1a1a1a; user-select: none; }
     .config-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.85); z-index: 100; align-items: flex-end; }
     .config-overlay.open { display: flex; }
     .config-panel { background: #141414; border-radius: 24px 24px 0 0; border-top: 0.5px solid var(--border); padding: 20px 20px 40px; width: 100%; }
@@ -110,8 +116,7 @@
 <div class="devices" id="deviceList">
   <div class="empty-state">Conectando...<br/>Mantén pulsado para configurar</div>
 </div>
-
-<div class="secret-hint">···</div>
+<div class="updated-bar" id="updatedBar">···</div>
 
 <div class="config-overlay" id="configOverlay" onclick="closeOnBg(event)">
   <div class="config-panel">
@@ -133,11 +138,17 @@ let pressTimer = null;
 
 document.getElementById('serverUrl').value = serverUrl;
 
+// Mantener pulsado 2s para abrir config
 document.body.addEventListener('touchstart', () => { pressTimer = setTimeout(openConfig, 2000); });
 document.body.addEventListener('touchend', () => clearTimeout(pressTimer));
 document.body.addEventListener('touchmove', () => clearTimeout(pressTimer));
 document.body.addEventListener('mousedown', () => { pressTimer = setTimeout(openConfig, 2000); });
 document.body.addEventListener('mouseup', () => clearTimeout(pressTimer));
+
+// Actualizar al volver a la app desde segundo plano
+document.addEventListener('visibilitychange', () => {
+  if (document.visibilityState === 'visible') fetchStatus();
+});
 
 function openConfig() { document.getElementById('configOverlay').classList.add('open'); }
 function closeConfig() { document.getElementById('configOverlay').classList.remove('open'); }
@@ -163,24 +174,15 @@ function loadLocalCache() {
   catch { return {}; }
 }
 
-function formatDate(ts) {
+function formatHora(ts) {
   if (!ts) return 'sin datos';
   const d = new Date(ts);
   const hoy = new Date();
   const ayer = new Date(); ayer.setDate(ayer.getDate() - 1);
-  const hora = `${d.getHours()}:${String(d.getMinutes()).padStart(2,'0')}`;
+  const hora = `${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`;
   if (d.toDateString() === hoy.toDateString()) return `hoy ${hora}`;
   if (d.toDateString() === ayer.toDateString()) return `ayer ${hora}`;
   return `${d.getDate()}/${d.getMonth()+1} ${hora}`;
-}
-
-function ago(sec) {
-  if (sec === null || sec === undefined) return '—';
-  if (sec < 60) return `hace ${sec}s`;
-  const m = Math.floor(sec / 60);
-  if (m < 60) return `hace ${m}m`;
-  const h = Math.floor(m / 60);
-  return `hace ${h}h ${m % 60}m`;
 }
 
 function renderDevices(list) {
@@ -194,8 +196,7 @@ function renderDevices(list) {
 
   el.innerHTML = list.map(d => {
     const ts = d.lastSeen && d.lastSeen > 0 ? d.lastSeen : (cache[d.id] || 0);
-    const ultimaVez = ts > 0 ? formatDate(ts) : 'sin datos';
-    const agoText = d.online && d.ago !== null ? ago(d.ago) : ultimaVez;
+    const horaTexto = ts > 0 ? formatHora(ts) : 'sin datos';
 
     return `
     <div class="device-card ${d.online ? 'online' : 'offline'}">
@@ -214,7 +215,7 @@ function renderDevices(list) {
       <div class="card-stats">
         <div class="stat">
           <div class="stat-label">${d.online ? 'Última señal' : 'Último encendido'}</div>
-          <div class="stat-val ${d.online ? 'g' : 'r'}">${agoText}</div>
+          <div class="stat-val ${d.online ? 'g' : 'r'}">${horaTexto}</div>
         </div>
         <div class="stat">
           <div class="stat-label">Estado</div>
@@ -223,6 +224,11 @@ function renderDevices(list) {
       </div>
     </div>`;
   }).join('');
+
+  // Barra de última actualización
+  const ahora = new Date();
+  const horaActual = `${String(ahora.getHours()).padStart(2,'0')}:${String(ahora.getMinutes()).padStart(2,'0')}:${String(ahora.getSeconds()).padStart(2,'0')}`;
+  document.getElementById('updatedBar').textContent = `actualizado · ${horaActual}`;
 }
 
 async function fetchStatus() {
@@ -241,7 +247,10 @@ async function fetchStatus() {
   }
 }
 
+// Cargar al iniciar
 fetchStatus();
+
+// Actualizar cada 60 segundos
 interval = setInterval(fetchStatus, 60000);
 </script>
 </body>
