@@ -20,7 +20,7 @@
       --border-on: rgba(34,197,94,0.3);
       --text: #ffffff;
       --text2: #888888;
-      --text3: #444444;
+      --text3: #666666;
       --green: #22c55e;
       --green-dim: rgba(34,197,94,0.12);
       --red: #ef4444;
@@ -84,17 +84,19 @@
     .badge-off { background: var(--red-dim);   color: var(--red);   border: 0.5px solid rgba(239,68,68,0.2); }
     .card-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 7px; }
     .stat { background: var(--surface2); border-radius: 10px; padding: 9px 11px; }
-    .stat-label { font-family: var(--mono); font-size: 9px; color: var(--text3); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 4px; }
+    .stat-label {
+      font-family: var(--mono);
+      font-size: 9px;
+      color: var(--text3);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin-bottom: 4px;
+      font-weight: 700;
+    }
     .stat-val { font-size: 13px; font-weight: 500; color: var(--text2); }
     .stat-val.g { color: var(--green); }
     .stat-val.r { color: var(--red); }
-    .updated-bar {
-      text-align: center;
-      margin-top: 16px;
-      font-family: var(--mono);
-      font-size: 10px;
-      color: #2a2a2a;
-    }
+    .updated-bar { text-align: center; margin-top: 16px; font-family: var(--mono); font-size: 10px; color: #555555; font-weight: 700; }
     .empty-state { text-align: center; padding: 60px 20px; color: var(--text3); font-family: var(--mono); font-size: 12px; line-height: 2.2; }
     .config-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.85); z-index: 100; align-items: flex-end; }
     .config-overlay.open { display: flex; }
@@ -138,14 +140,12 @@ let pressTimer = null;
 
 document.getElementById('serverUrl').value = serverUrl;
 
-// Mantener pulsado 2s para abrir config
 document.body.addEventListener('touchstart', () => { pressTimer = setTimeout(openConfig, 2000); });
 document.body.addEventListener('touchend', () => clearTimeout(pressTimer));
 document.body.addEventListener('touchmove', () => clearTimeout(pressTimer));
 document.body.addEventListener('mousedown', () => { pressTimer = setTimeout(openConfig, 2000); });
 document.body.addEventListener('mouseup', () => clearTimeout(pressTimer));
 
-// Actualizar al volver a la app desde segundo plano
 document.addEventListener('visibilitychange', () => {
   if (document.visibilityState === 'visible') fetchStatus();
 });
@@ -174,15 +174,40 @@ function loadLocalCache() {
   catch { return {}; }
 }
 
-function formatHora(ts) {
+const DIAS  = ['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'];
+const MESES = ['Enero','Feb','Marzo','Abril','Mayo','Junio','Julio','Agosto','Sep','Oct','Nov','Dic'];
+
+function formatFecha(ts, online) {
   if (!ts) return 'sin datos';
   const d = new Date(ts);
-  const hoy = new Date();
-  const ayer = new Date(); ayer.setDate(ayer.getDate() - 1);
+  const ahora = new Date();
   const hora = `${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`;
-  if (d.toDateString() === hoy.toDateString()) return `hoy ${hora}`;
-  if (d.toDateString() === ayer.toDateString()) return `ayer ${hora}`;
-  return `${d.getDate()}/${d.getMonth()+1} ${hora}`;
+
+  // Calcular diferencia en horas
+  const diffMs = ahora - d;
+  const diffH = diffMs / (1000 * 60 * 60);
+
+  if (online) {
+    // Encendido → siempre "Hoy | HH:MM"
+    return `Hoy | ${hora}`;
+  }
+
+  // Apagado: menos de 24h → "Ayer | HH:MM" si fue ayer, "Hoy | HH:MM" si fue hoy
+  const hoyStr  = ahora.toDateString();
+  const ayerDate = new Date(); ayerDate.setDate(ayerDate.getDate() - 1);
+  const ayerStr = ayerDate.toDateString();
+
+  if (d.toDateString() === hoyStr) {
+    return `Hoy | ${hora}`;
+  } else if (d.toDateString() === ayerStr && diffH < 48) {
+    return `Ayer | ${hora}`;
+  } else {
+    // Más de 24h → formato completo
+    const dia  = DIAS[d.getDay()];
+    const num  = d.getDate();
+    const mes  = MESES[d.getMonth()];
+    return `${dia} ${num} ${mes} | ${hora}`;
+  }
 }
 
 function renderDevices(list) {
@@ -196,7 +221,7 @@ function renderDevices(list) {
 
   el.innerHTML = list.map(d => {
     const ts = d.lastSeen && d.lastSeen > 0 ? d.lastSeen : (cache[d.id] || 0);
-    const horaTexto = ts > 0 ? formatHora(ts) : 'sin datos';
+    const horaTexto = formatFecha(ts, d.online);
 
     return `
     <div class="device-card ${d.online ? 'online' : 'offline'}">
@@ -225,7 +250,6 @@ function renderDevices(list) {
     </div>`;
   }).join('');
 
-  // Barra de última actualización
   const ahora = new Date();
   const horaActual = `${String(ahora.getHours()).padStart(2,'0')}:${String(ahora.getMinutes()).padStart(2,'0')}:${String(ahora.getSeconds()).padStart(2,'0')}`;
   document.getElementById('updatedBar').textContent = `actualizado · ${horaActual}`;
@@ -247,10 +271,7 @@ async function fetchStatus() {
   }
 }
 
-// Cargar al iniciar
 fetchStatus();
-
-// Actualizar cada 60 segundos
 interval = setInterval(fetchStatus, 60000);
 </script>
 </body>
