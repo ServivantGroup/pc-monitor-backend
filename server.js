@@ -7,10 +7,21 @@ app.use(cors());
 app.use(express.json());
 app.use(express.static(path.join(__dirname, "public")));
 
+// =============================================
+//  PCs CONOCIDOS
+// =============================================
 const KNOWN_DEVICES = [
-  { id: "PC1", name: "ServiVant_Torre" },
-  { id: "PC2", name: "SER-02" },
-  { id: "PC3", name: "SER-03" },
+  { id: "pc1", name: "ServiVant_Torre" },
+  { id: "pc2", name: "SER-02" },
+  { id: "pc3", name: "SER-03" },
+];
+
+// =============================================
+//  SCRIPTS CONOCIDOS (aparecen dentro del PC)
+//  parent = id del PC donde corre
+// =============================================
+const KNOWN_SCRIPTS = [
+  { id: "ahk-pc3", name: "AHK Vigilar Diseños", parent: "pc3" },
 ];
 
 const lastSeen = {};
@@ -25,16 +36,33 @@ app.post("/heartbeat", (req, res) => {
 app.get("/status", (req, res) => {
   const TIMEOUT_MS = 3 * 60 * 1000;
   const now = Date.now();
+
   const result = KNOWN_DEVICES.map((d) => {
     const ts = lastSeen[d.id] || 0;
+
+    // Scripts asociados a este PC
+    const scripts = KNOWN_SCRIPTS
+      .filter((s) => s.parent === d.id)
+      .map((s) => {
+        const sts = lastSeen[s.id] || 0;
+        return {
+          id: s.id,
+          name: s.name,
+          online: sts > 0 && now - sts < TIMEOUT_MS,
+          lastSeen: sts,
+        };
+      });
+
     return {
       id: d.id,
       name: d.name,
       online: ts > 0 && now - ts < TIMEOUT_MS,
       lastSeen: ts,
       ago: ts > 0 ? Math.floor((now - ts) / 1000) : null,
+      scripts: scripts,
     };
   });
+
   res.json(result);
 });
 
