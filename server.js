@@ -11,9 +11,9 @@ app.use(express.static(path.join(__dirname, "public")));
 //  PCs CONOCIDOS
 // =============================================
 const KNOWN_DEVICES = [
-  { id: "pc1", name: "ServiVant_Torre" },
-  { id: "pc2", name: "SER-02" },
-  { id: "pc3", name: "SER-03" },
+  { id: "PC1", name: "ServiVant_Torre" },
+  { id: "PC2", name: "SER-02" },
+  { id: "PC3", name: "SER-03" },
 ];
 
 // =============================================
@@ -21,7 +21,7 @@ const KNOWN_DEVICES = [
 //  parent = id del PC donde corre
 // =============================================
 const KNOWN_SCRIPTS = [
-  { id: "ahk-pc3", name: "AHK Vigilar Diseños", parent: "pc3" },
+  { id: "AHK-PC3", name: "AHK Vigilar Diseños", parent: "PC3" },
 ];
 
 const lastSeen = {};
