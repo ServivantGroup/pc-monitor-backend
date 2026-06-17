@@ -11,9 +11,9 @@ app.use(express.static(path.join(__dirname, "public")));
 //  PCs CONOCIDOS
 // =============================================
 const KNOWN_DEVICES = [
-  { id: "PC1", name: "ServiVant_Torre" },
-  { id: "PC2", name: "SER-02" },
-  { id: "PC3", name: "SER-03" },
+  { id: "pc1", name: "ServiVant_Torre" },
+  { id: "pc2", name: "SER-02" },
+  { id: "pc3", name: "SER-03" },
 ];
 
 // =============================================
@@ -27,9 +27,11 @@ const KNOWN_SCRIPTS = [
 
 const lastSeen = {};
 
+// Guarda siempre el id en minúsculas para evitar líos de mayúsculas
 app.post("/heartbeat", (req, res) => {
-  const { id } = req.body;
+  let { id } = req.body;
   if (!id) return res.status(400).json({ error: "Falta el id" });
+  id = String(id).toLowerCase();
   lastSeen[id] = Date.now();
   res.json({ ok: true });
 });
@@ -39,12 +41,12 @@ app.get("/status", (req, res) => {
   const now = Date.now();
 
   const result = KNOWN_DEVICES.map((d) => {
-    const ts = lastSeen[d.id] || 0;
+    const ts = lastSeen[d.id.toLowerCase()] || 0;
 
     const scripts = KNOWN_SCRIPTS
-      .filter((s) => s.parent === d.id)
+      .filter((s) => s.parent.toLowerCase() === d.id.toLowerCase())
       .map((s) => {
-        const sts = lastSeen[s.id] || 0;
+        const sts = lastSeen[s.id.toLowerCase()] || 0;
         return {
           id: s.id,
           name: s.name,
