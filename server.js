@@ -21,7 +21,8 @@ const KNOWN_DEVICES = [
 //  parent = id del PC donde corre
 // =============================================
 const KNOWN_SCRIPTS = [
-  { id: "AHK-PC3", name: "AHK Vigilar Diseños", parent: "PC3" },
+  { id: "ahk-pc3", name: "AHK Vigilar Diseños", parent: "pc3" },
+  { id: "wa-pc3", name: "WhatsApp Sender", parent: "pc3" },
 ];
 
 const lastSeen = {};
@@ -40,7 +41,6 @@ app.get("/status", (req, res) => {
   const result = KNOWN_DEVICES.map((d) => {
     const ts = lastSeen[d.id] || 0;
 
-    // Scripts asociados a este PC
     const scripts = KNOWN_SCRIPTS
       .filter((s) => s.parent === d.id)
       .map((s) => {
